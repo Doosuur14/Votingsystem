@@ -1,0 +1,295 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Poll - Voting System</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #e0f7fa, #b0bec5);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        nav {
+            position: sticky;
+            top: 0;
+            background: #ffffff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            z-index: 1000;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .nav-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            padding: 15px 0;
+        }
+
+        .nav-tab {
+            padding: 12px 24px;
+            color: #374151;
+            font-size: 18px;
+            font-weight: 600;
+            text-decoration: none;
+            border-radius: 8px 8px 0 0;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        .nav-tab:hover {
+            background: #2563eb;
+            color: #ffffff;
+        }
+
+        .nav-tab.active {
+            background: #1e40af;
+            color: #ffffff;
+        }
+
+        .container {
+            max-width: 700px;
+            width: 100%;
+            background: #ffffff;
+            padding: 40px;
+            margin: 20px 20px 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        h2 {
+            font-size: 32px;
+            color: #1f2937;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        label {
+            display: block;
+            font-size: 18px;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 8px;
+        }
+
+        input[type="text"],
+        input[type="datetime-local"],
+        select,
+        input[type="checkbox"] {
+            width: 100%;
+            padding: 16px;
+            font-size: 18px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+        }
+
+        button {
+            width: 100%;
+            padding: 16px;
+            font-size: 18px;
+            font-weight: 600;
+            color: #ffffff;
+            background: #2563eb;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        button:hover {
+            background: #1e40af;
+        }
+
+        .error {
+            background: #fee2e2;
+            color: #b91c1c;
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .option-group {
+            margin-bottom: 16px;
+        }
+
+        .option-group input {
+            margin-bottom: 8px;
+        }
+
+        .add-option {
+            font-size: 16px;
+            color: #2563eb;
+            cursor: pointer;
+            margin-top: 8px;
+        }
+
+        .add-option:hover {
+            text-decoration: underline;
+        }
+
+        .link {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .link a {
+            color: #2563eb;
+            font-size: 16px;
+            font-weight: 600;
+            text-decoration: none;
+            margin: 0 10px;
+        }
+
+        .link a:hover {
+            text-decoration: underline;
+        }
+
+        .scale-container {
+            display: none;
+        }
+
+        @media (max-width: 640px) {
+            .container {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <nav>
+        <div class="nav-container">
+            <div class="nav-tabs">
+                <a href="/Poll" class="nav-tab">Poll</a>
+                <a href="/polls" class="nav-tab">Create Poll</a>
+                <a href="/my-polls" class="nav-tab active">My Polls</a>
+                <a href="/profile" class="nav-tab">Profile</a>
+                <a href="/logout" class="nav-tab">Logout</a>
+            </div>
+        </div>
+    </nav>
+    <div class="container">
+        <h2>Edit Poll</h2>
+        {{ if .Error }}
+        <div class="error">{{ .Error }}</div>
+        {{ end }}
+        <form method="POST" action="/polls/update/{{ .Poll.ID }}">
+            <input type="hidden" name="csrf_token" value="{{ .CSRFToken }}">
+            <div class="form-group">
+                <label for="title">Poll Title</label>
+                <input type="text" id="title" name="title" value="{{ .Poll.Title }}" required>
+            </div>
+            <div class="form-group">
+                <label for="question_type">Question Type</label>
+                <select id="question_type" name="question_type" onchange="toggleOptions()">
+                    <option value="single_choice" {{ if eq .Poll.QuestionType "single_choice" }}selected{{ end }}>Single
+                        Choice</option>
+                    <option value="multiple_choice" {{ if eq .Poll.QuestionType "multiple_choice" }}selected{{ end }}>
+                        Multiple Choice</option>
+                    <option value="scale" {{ if eq .Poll.QuestionType "scale" }}selected{{ end }}>Scale</option>
+                    <option value="text" {{ if eq .Poll.QuestionType "text" }}selected{{ end }}>Text</option>
+                </select>
+            </div>
+            <div class="form-group options-container">
+                <label>Options</label>
+                <div id="options">
+                    {{ range $index, $option := .Options }}
+                    <div class="option-group">
+                        <input type="text" name="options[]" value="{{ $option.Text }}"
+                            placeholder="Option {{ add $index 1 }}">
+                    </div>
+                    {{ else }}
+                    <div class="option-group">
+                        <input type="text" name="options[]" placeholder="Option 1">
+                    </div>
+                    <div class="option-group">
+                        <input type="text" name="options[]" placeholder="Option 2">
+                    </div>
+                    {{ end }}
+                </div>
+                <div class="add-option" onclick="addOption()">Add Option</div>
+            </div>
+            <!-- <div class="form-group scale-container">
+                <label for="scale_label">Scale Label</label>
+                <input type="text" id="scale_label" name="options[]"
+                    value="{{ if .Options }}{{ (index .Options 0).Text }}{{ end }}" placeholder="e.g., Rating">
+            </div> -->
+            <div class="form-group">
+                <label for="start_date">Start Date</label>
+                <input type="datetime-local" id="start_date" name="start_date"
+                    value="{{ .Poll.StartDate.Format `2006-01-02T15:04` }}" required>
+            </div>
+            <div class="form-group">
+                <label for="end_date">End Date (Optional)</label>
+                <input type="datetime-local" id="end_date" name="end_date"
+                    value="{{ if .Poll.EndDate }}{{ .Poll.EndDate.Format `2006-01-02T15:04` }}{{ end }}">
+            </div>
+            <div class="form-group">
+                <label for="is_anonymous">
+                    <input type="checkbox" id="is_anonymous" name="is_anonymous" {{ if .Poll.IsAnonymous }}checked{{ end
+                        }}>
+                    Anonymous Poll
+                </label>
+            </div>
+            <button type="submit">Update Poll</button>
+        </form>
+        <div class="link">
+            <a href="/my-polls">Back to My Polls</a>
+        </div>
+    </div>
+    <script>
+        function toggleOptions() {
+            const questionType = document.getElementById('question_type').value;
+            const optionsContainer = document.querySelector('.options-container');
+            const scaleContainer = document.querySelector('.scale-container');
+            optionsContainer.style.display = (questionType === 'single_choice' || questionType === 'multiple_choice') ? 'block' : 'none';
+            scaleContainer.style.display = questionType === 'scale' ? 'block' : 'none';
+        }
+
+        function addOption() {
+            const optionsDiv = document.getElementById('options');
+            const optionCount = optionsDiv.children.length + 1;
+            const newOption = document.createElement('div');
+            newOption.className = 'option-group';
+            newOption.innerHTML = `<input type="text" name="options[]" placeholder="Option ${optionCount}">`;
+            optionsDiv.appendChild(newOption);
+        }
+
+        toggleOptions();
+        document.getElementById('question_type').addEventListener('change', toggleOptions);
+    </script>
+</body>
+
+</html>

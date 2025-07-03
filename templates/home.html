@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Voting System Home</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #FECDD3, #C4B5FD, #A7F3D0);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+    }
+
+    .home-container {
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(10px);
+      padding: 2.5rem;
+      border-radius: 1rem;
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      max-width: 28rem;
+      width: 100%;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeInUp 0.8s ease-out forwards;
+    }
+
+    @keyframes fadeInUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 0.75rem 1.75rem;
+      border-radius: 0.5rem;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 1rem;
+      margin: 0.5rem;
+      transition: transform 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .btn-login {
+      background-color: #FECDD3;
+      color: #4B1C46;
+    }
+
+    .btn-login:hover {
+      background-color: #F9A8D4;
+      transform: scale(1.05);
+      box-shadow: 0 4px 15px rgba(254, 205, 211, 0.4);
+    }
+
+    .btn-register {
+      background-color: #A7F3D0;
+      color: #1F4E44;
+    }
+
+    .btn-register:hover {
+      background-color: #6EE7B7;
+      transform: scale(1.05);
+      box-shadow: 0 4px 15px rgba(167, 243, 208, 0.4);
+    }
+
+    footer {
+      position: absolute;
+      bottom: 1rem;
+      width: 100%;
+      text-align: center;
+      color: #4B1C46;
+      font-size: 0.85rem;
+      font-weight: 500;
+    }
+
+    footer a {
+      color: #C4B5FD;
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 640px) {
+      .home-container {
+        padding: 1.5rem;
+      }
+
+      .btn {
+        width: 100%;
+        margin: 0.5rem 0;
+      }
+
+      footer {
+        position: relative;
+        margin-top: 1rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="home-container">
+    <h2 class="text-3xl font-bold text-gray-800 mb-4">Welcome to VoteEasy</h2>
+    <p class="text-lg text-gray-600 mb-8">Vote in secure polls with a delightful experience!</p>
+    <div class="flex justify-center gap-4 flex-wrap">
+      <a href="/login" class="btn btn-login">Login</a>
+      <a href="/register" class="btn btn-register">Register</a>
+    </div>
+  </div>
+  <footer>
+    &copy; 2025 VoteEasy. All rights reserved. <a href="/about">About</a> | <a href="/contact">Contact</a>
+  </footer>
+</body>
+
+</html>

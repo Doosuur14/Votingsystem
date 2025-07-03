@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ .Title }}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #FECDD3, #C4B5FD, #A7F3D0);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        nav {
+            position: sticky;
+            top: 0;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            z-index: 1000;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1.25rem;
+        }
+
+        .nav-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.75rem 0;
+        }
+
+        .nav-tab {
+            padding: 0.75rem 1.5rem;
+            color: #4B1C46;
+            font-size: 1rem;
+            font-weight: 600;
+            text-decoration: none;
+            border-radius: 0.5rem;
+            transition: background 0.3s, color 0.3s, transform 0.3s;
+        }
+
+        .nav-tab:hover {
+            background: #C4B5FD;
+            color: #ffffff;
+            transform: scale(1.05);
+        }
+
+        .nav-tab.active {
+            background: #A78BFA;
+            color: #ffffff;
+        }
+
+        .container {
+            max-width: 700px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            padding: 2.5rem;
+            margin: 1.25rem;
+            border-radius: 1rem;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.8s ease-out forwards;
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .btn {
+            width: 100%;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: transform 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
+            background-color: #A7F3D0;
+            color: #1F4E44;
+            border: none;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.03);
+            }
+        }
+
+        .btn:hover {
+            background-color: #6EE7B7;
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(167, 243, 208, 0.4);
+            animation-play-state: paused;
+        }
+
+        .error {
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            text-align: center;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            background: #FEE2E2;
+            color: #B91C1C;
+        }
+
+        .add-option {
+            color: #C4B5FD;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-top: 0.5rem;
+            transition: color 0.3s;
+        }
+
+        .add-option:hover {
+            color: #A78BFA;
+            text-decoration: underline;
+        }
+
+        .scale-container {
+            display: none;
+        }
+
+        footer {
+            position: absolute;
+            bottom: 1rem;
+            width: 100%;
+            text-align: center;
+            color: #4B1C46;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        footer a {
+            color: #C4B5FD;
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 640px) {
+            .container {
+                padding: 1.5rem;
+                margin: 1rem;
+            }
+
+            .nav-tabs {
+                flex-wrap: wrap;
+                gap: 0.25rem;
+            }
+
+            .nav-tab {
+                padding: 0.5rem 1rem;
+                font-size: 0.9rem;
+            }
+
+            footer {
+                position: relative;
+                margin-top: 1rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <nav>
+        <div class="nav-container">
+            <div class="nav-tabs">
+                {{ if ne .Role "admin" }}
+                <a href="/polls-list" class="nav-tab">Polls</a>
+                {{ end }}
+                {{ if eq .Role "admin" }}
+                <a href="/polls" class="nav-tab active">Create Poll</a>
+                <a href="/my-polls" class="nav-tab">My Polls</a>
+                <a href="/admin/polls" class="nav-tab">Poll Details</a>
+                <a href="/admin/users" class="nav-tab">User Details</a>
+                <a href="/admin" class="nav-tab">Assign Admin</a>
+                {{ end }}
+                <a href="/profile" class="nav-tab">Profile</a>
+                <a href="/logout" class="nav-tab">Logout</a>
+            </div>
+        </div>
+    </nav>
+    <div class="container">
+        <h2 class="text-3xl font-bold text-gray-800 mb-4">Create a New Poll</h2>
+        {{ if .Error }}
+        <div class="error">{{ .Error }}</div>
+        {{ end }}
+        <form method="POST" action="/polls" class="space-y-4">
+            <input type="hidden" name="csrf_token" value="{{ .CSRFToken }}">
+            <div class="form-group">
+                <label for="title" class="block text-sm font-semibold text-gray-700">Poll Title</label>
+                <input type="text" id="title" name="title" value="{{ .Input.Title }}" required
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A7F3D0] focus:border-transparent">
+            </div>
+            <div class="form-group">
+                <label for="question_type" class="block text-sm font-semibold text-gray-700">Question Type</label>
+                <select id="question_type" name="question_type" onchange="toggleOptions()"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A7F3D0] focus:border-transparent">
+                    <option value="single_choice" {{ if eq .Input.QuestionType "single_choice" }}selected{{ end }}>
+                        Single Choice</option>
+                    <option value="multiple_choice" {{ if eq .Input.QuestionType "multiple_choice" }}selected{{ end }}>
+                        Multiple Choice</option>
+                    <option value="scale" {{ if eq .Input.QuestionType "scale" }}selected{{ end }}>Scale</option>
+                    <option value="text" {{ if eq .Input.QuestionType "text" }}selected{{ end }}>Text</option>
+                </select>
+            </div>
+            <div class="form-group options-container">
+                <label class="block text-sm font-semibold text-gray-700">Options</label>
+                <div id="options" class="space-y-2">
+                    {{ range $index, $option := .Input.Options }}
+                    <div class="option-group">
+                        <input type="text" name="options[]" value="{{ $option }}"
+                            placeholder="Option {{ add $index 1 }}"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A7F3D0] focus:border-transparent">
+                    </div>
+                    {{ else }}
+                    <div class="option-group">
+                        <input type="text" name="options[]" placeholder="Option 1"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A7F3D0] focus:border-transparent">
+                    </div>
+                    <div class="option-group">
+                        <input type="text" name="options[]" placeholder="Option 2"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A7F3D0] focus:border-transparent">
+                    </div>
+                    {{ end }}
+                </div>
+                <div class="add-option" onclick="addOption()">Add Option</div>
+            </div>
+            <div class="form-group">
+                <label for="start_date" class="block text-sm font-semibold text-gray-700">Start Date</label>
+                <input type="datetime-local" id="start_date" name="start_date" value="{{ .Input.StartDate }}" required
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A7F3D0] focus:border-transparent">
+            </div>
+            <div class="form-group">
+                <label for="end_date" class="block text-sm font-semibold text-gray-700">End Date (Optional)</label>
+                <input type="datetime-local" id="end_date" name="end_date" value="{{ .Input.EndDate }}"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A7F3D0] focus:border-transparent">
+            </div>
+            <div class="form-group">
+                <label for="is_anonymous" class="flex items-center text-sm font-semibold text-gray-700">
+                    <input type="checkbox" id="is_anonymous" name="is_anonymous" {{ if .Input.IsAnonymous }}checked{{
+                        end }} class="mr-2">
+                    Anonymous Poll
+                </label>
+            </div>
+            <button type="submit" class="btn">Create Poll</button>
+        </form>
+    </div>
+    <!-- <footer>
+        © 2025 VoteEasy. All rights reserved. <a href="/about">About</a> | <a href="/contact">Contact</a>
+    </footer> -->
+    <script>
+        function toggleOptions() {
+            const questionType = document.getElementById('question_type').value;
+            const optionsContainer = document.querySelector('.options-container');
+            const scaleContainer = document.querySelector('.scale-container');
+            optionsContainer.style.display = (questionType === 'single_choice' || questionType === 'multiple_choice') ? 'block' : 'none';
+            scaleContainer.style.display = questionType === 'scale' ? 'block' : 'none';
+        }
+
+        function addOption() {
+            const optionsDiv = document.getElementById('options');
+            const optionCount = optionsDiv.children.length + 1;
+            const newOption = document.createElement('div');
+            newOption.className = 'option-group';
+            newOption.innerHTML = `<input type="text" name="options[]" placeholder="Option ${optionCount}" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A7F3D0] focus:border-transparent">`;
+            optionsDiv.appendChild(newOption);
+        }
+
+        toggleOptions();
+        document.getElementById('question_type').addEventListener('change', toggleOptions);
+    </script>
+</body>
+
+</html>
